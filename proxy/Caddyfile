@@ -1,0 +1,35 @@
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy no-referrer
+		-Server
+	}
+}
+
+{$UNIMCP_DOMAIN} {
+	import common
+	reverse_proxy unimcp:8787
+}
+
+admin.{$UNIMCP_DOMAIN} {
+	import common
+	reverse_proxy unimcp:8788
+}
+
+dev.{$UNIMCP_DOMAIN} {
+	import common
+	reverse_proxy unimcp-dev:8787
+}
+
+admin.dev.{$UNIMCP_DOMAIN} {
+	import common
+	reverse_proxy unimcp-dev:8788
+}
+
+{$TRANSIT_DOMAIN} {
+	import common
+	reverse_proxy transit-mcp:8000
+}

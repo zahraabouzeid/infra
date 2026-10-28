@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  proxy:
+    name: Proxy
+    needs: test
+    if: vars.SSH_TARGET != ''
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ${{ vars.SSH_TARGET }}
+      FOLDER: ${{ vars.DEPLOY_FOLDER }}
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - env:
+          UNIMCP_DOMAIN: ${{ vars.UNIMCP_DOMAIN }}
+          TRANSIT_DOMAIN: ${{ vars.TRANSIT_DOMAIN }}
+        run: |
+          for name in UNIMCP_DOMAIN TRANSIT_DOMAIN; do
+            printf '%s=%s\n' "$name" "${!name}"
+          done > proxy/.env
+      - run: ssh "$TARGET" "mkdir -p $FOLDER/proxy"
+      - run: scp proxy/.env proxy/compose.yaml proxy/Caddyfile proxy/deploy.sh "$TARGET:$FOLDER/proxy/"
+      - run: ssh "$TARGET" "sh $FOLDER/proxy/deploy.sh"
