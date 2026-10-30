@@ -15,8 +15,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: >
           docker run --rm
-          -e UNIMCP_DOMAIN=unimcp.example.org
-          -e TRANSIT_DOMAIN=transit.example.org
           -e MCP_DOMAIN=mcp.example.org
           -v "$PWD/proxy/Caddyfile:/etc/caddy/Caddyfile:ro"
           caddy:2 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile

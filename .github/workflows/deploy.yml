@@ -35,11 +35,9 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
       - env:
-          UNIMCP_DOMAIN: ${{ vars.UNIMCP_DOMAIN }}
-          TRANSIT_DOMAIN: ${{ vars.TRANSIT_DOMAIN }}
           MCP_DOMAIN: ${{ vars.MCP_DOMAIN }}
         run: |
-          for name in UNIMCP_DOMAIN TRANSIT_DOMAIN MCP_DOMAIN; do
+          for name in MCP_DOMAIN; do
             printf '%s=%s\n' "$name" "${!name}"
           done > proxy/.env
       - run: ssh "$TARGET" "mkdir -p $FOLDER/proxy"
