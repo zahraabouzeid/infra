@@ -33,3 +33,23 @@ admin.dev.{$UNIMCP_DOMAIN} {
 	import common
 	reverse_proxy transit-mcp:8000
 }
+
+canteen.{$MCP_DOMAIN} {
+	import common
+	reverse_proxy canteen-mcp:8000
+}
+
+ical.{$MCP_DOMAIN} {
+	import common
+	reverse_proxy ical-mcp:8000
+}
+
+webdav.{$MCP_DOMAIN} {
+	import common
+	reverse_proxy webdav-mcp:8000
+}
+
+moodle.{$MCP_DOMAIN} {
+	import common
+	reverse_proxy moodle-mcp:8000
+}
