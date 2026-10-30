@@ -9,27 +9,7 @@
 	}
 }
 
-{$UNIMCP_DOMAIN} {
-	import common
-	reverse_proxy unimcp:8787
-}
-
-admin.{$UNIMCP_DOMAIN} {
-	import common
-	reverse_proxy unimcp:8788
-}
-
-dev.{$UNIMCP_DOMAIN} {
-	import common
-	reverse_proxy unimcp-dev:8787
-}
-
-admin.dev.{$UNIMCP_DOMAIN} {
-	import common
-	reverse_proxy unimcp-dev:8788
-}
-
-{$TRANSIT_DOMAIN} {
+transit.{$MCP_DOMAIN} {
 	import common
 	reverse_proxy transit-mcp:8000
 }
