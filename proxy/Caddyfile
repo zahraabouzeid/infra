@@ -33,3 +33,8 @@ moodle.{$MCP_DOMAIN} {
 	import common
 	reverse_proxy moodle-mcp:8000
 }
+
+memory.{$MCP_DOMAIN} {
+	import common
+	reverse_proxy memory-mcp:8000
+}
