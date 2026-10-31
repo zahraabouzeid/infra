@@ -4,6 +4,7 @@ services:
     restart: unless-stopped
     user: "0:0"
     hostname: vm
+    cgroup: host
     env_file: .env
     mem_limit: 200m
     command:
