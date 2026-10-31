@@ -13,6 +13,12 @@ A service joins the proxy by attaching its container to the external network `we
 name the `Caddyfile` uses. To add a service, add a site block to `proxy/Caddyfile` and a
 variable for its domain.
 
+## Monitoring
+
+`monitoring/` runs Grafana Alloy, which sends host metrics and container logs to Grafana Cloud. It opens no port. It needs the Docker socket and read-only access to the host's disk.
+
+The deploy also needs these secrets: `GRAFANA_PROMETHEUS_URL`, `GRAFANA_PROMETHEUS_USER`, `GRAFANA_LOKI_URL`, `GRAFANA_LOKI_USER` and `GRAFANA_CLOUD_TOKEN`.
+
 ## Deploy
 
 Every push to `main` validates the `Caddyfile` and deploys the proxy over SSH into
