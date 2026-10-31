@@ -4,7 +4,6 @@ services:
     restart: unless-stopped
     user: "0:0"
     hostname: vm
-    cgroup: host
     env_file: .env
     mem_limit: 200m
     command:
@@ -18,7 +17,6 @@ services:
       - /:/rootfs:ro
       - /proc:/host/proc:ro
       - /sys:/sys:ro
-      - /var/lib/docker:/var/lib/docker:ro
 
 volumes:
   alloy_data:
