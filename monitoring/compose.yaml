@@ -1,0 +1,23 @@
+services:
+  alloy:
+    image: grafana/alloy:v1.21.3
+    restart: unless-stopped
+    user: "0:0"
+    hostname: vm
+    env_file: .env
+    mem_limit: 200m
+    command:
+      - run
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - alloy_data:/var/lib/alloy/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/rootfs:ro
+      - /proc:/host/proc:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+
+volumes:
+  alloy_data:

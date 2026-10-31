@@ -43,3 +43,36 @@ jobs:
       - run: ssh "$TARGET" "mkdir -p $FOLDER/proxy"
       - run: scp proxy/.env proxy/compose.yaml proxy/Caddyfile proxy/deploy.sh "$TARGET:$FOLDER/proxy/"
       - run: ssh "$TARGET" "sh $FOLDER/proxy/deploy.sh"
+
+  monitoring:
+    name: Monitoring
+    needs: test
+    if: vars.SSH_TARGET != ''
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ${{ vars.SSH_TARGET }}
+      FOLDER: ${{ vars.DEPLOY_FOLDER }}
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - env:
+          GRAFANA_PROMETHEUS_URL: ${{ secrets.GRAFANA_PROMETHEUS_URL }}
+          GRAFANA_PROMETHEUS_USER: ${{ secrets.GRAFANA_PROMETHEUS_USER }}
+          GRAFANA_LOKI_URL: ${{ secrets.GRAFANA_LOKI_URL }}
+          GRAFANA_LOKI_USER: ${{ secrets.GRAFANA_LOKI_USER }}
+          GRAFANA_CLOUD_TOKEN: ${{ secrets.GRAFANA_CLOUD_TOKEN }}
+        run: |
+          umask 077
+          for name in GRAFANA_PROMETHEUS_URL GRAFANA_PROMETHEUS_USER GRAFANA_LOKI_URL GRAFANA_LOKI_USER GRAFANA_CLOUD_TOKEN; do
+            printf '%s=%s\n' "$name" "${!name}"
+          done > monitoring/.env
+      - run: ssh "$TARGET" "mkdir -p $FOLDER/monitoring"
+      - run: scp monitoring/.env monitoring/compose.yaml monitoring/config.alloy monitoring/deploy.sh "$TARGET:$FOLDER/monitoring/"
+      - run: ssh "$TARGET" "sh $FOLDER/monitoring/deploy.sh"

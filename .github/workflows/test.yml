@@ -18,3 +18,12 @@ jobs:
           -e MCP_DOMAIN=mcp.example.org
           -v "$PWD/proxy/Caddyfile:/etc/caddy/Caddyfile:ro"
           caddy:2 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+
+  alloy:
+    name: Alloy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          image=$(sed -n 's/^ *image: //p' monitoring/compose.yaml)
+          docker run --rm -v "$PWD/monitoring/config.alloy:/config.alloy:ro" "$image" validate /config.alloy
