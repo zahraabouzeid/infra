@@ -46,7 +46,7 @@ jobs:
 
   monitoring:
     name: Monitoring
-    needs: test
+    needs: [test, proxy]
     if: vars.SSH_TARGET != ''
     runs-on: ubuntu-latest
     env:
