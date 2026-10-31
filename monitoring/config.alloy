@@ -9,13 +9,8 @@ prometheus.exporter.unix "host" {
   set_collectors = ["cpu", "diskstats", "filesystem", "loadavg", "meminfo", "netdev", "pressure", "stat", "uname", "vmstat"]
 }
 
-prometheus.exporter.cadvisor "containers" {
-  docker_only            = true
-  store_container_labels = false
-}
-
 prometheus.scrape "metrics" {
-  targets         = array.concat(prometheus.exporter.unix.host.targets, prometheus.exporter.cadvisor.containers.targets)
+  targets         = prometheus.exporter.unix.host.targets
   scrape_interval = "60s"
   forward_to      = [prometheus.remote_write.cloud.receiver]
 }
